@@ -1,6 +1,12 @@
 import json
+
+import sys
 from click.testing import CliRunner
-from unittest.mock import MagicMock
+
+if sys.version_info < (3, 3, 0):
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 from zign.cli import cli
 
 

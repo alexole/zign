@@ -94,7 +94,7 @@ def token(obj, scope, url, realm, name, user, password, insecure, refresh):
     try:
         token = get_named_token(scope, realm, name, user, password, url, insecure, refresh, prompt=True)
     except ServerError as e:
-        raise click.UsageError(e)
+        raise click.UsageError(str(e))
     access_token = token.get('access_token')
 
     print(access_token)

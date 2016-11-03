@@ -1,9 +1,14 @@
 import pytest
 import time
+
+import sys
 import tokens
 import zign.api
 
-from unittest.mock import MagicMock
+if sys.version_info < (3, 3, 0):
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 
 
 def test_is_valid():
