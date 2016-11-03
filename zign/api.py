@@ -92,7 +92,7 @@ def store_token(name, result):
     dir_path = os.path.dirname(TOKENS_FILE_PATH)
     if dir_path:
         try:
-            os.makedirs(dir_path) #, exist_ok=True)
+            os.makedirs(dir_path)
         except OSError:
             pass
 
