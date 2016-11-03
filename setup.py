@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from future.builtins import open
 import sys
 import os
 import inspect
@@ -9,9 +10,6 @@ import setuptools
 from setuptools.command.test import test as TestCommand
 from setuptools import setup
 
-if sys.version_info < (3, 4, 0):
-    sys.stderr.write('FATAL: STUPS zign needs to be run with Python 3.4+\n')
-    sys.exit(1)
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 

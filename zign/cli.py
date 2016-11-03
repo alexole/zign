@@ -32,17 +32,19 @@ def cli(ctx):
     ctx.obj = stups_cli.config.load_config('zign')
 
 
-def format_expires(token: dict):
+def format_expires(token):
     now = time.time()
     remaining = token.get('creation_time', 0) + token.get('expires_in', 0) - now
     return '{}m'.format(round(remaining / 60))
+
+format_expires.__annotations__ = {'token': dict}
 
 
 @cli.command('list')
 @output_option
 @click.pass_obj
 def list_tokens(obj, output):
-    '''List tokens'''
+    """List tokens"""
     data = get_tokens()
 
     rows = []
@@ -62,7 +64,7 @@ def list_tokens(obj, output):
 @click.argument('name')
 @click.pass_obj
 def delete_token(obj, name):
-    '''Delete a named token'''
+    """Delete a named token"""
     data = get_tokens()
 
     try:
@@ -85,7 +87,7 @@ def delete_token(obj, name):
 @click.option('-r', '--refresh', help='Force refresh of the access token', is_flag=True, default=False)
 @click.pass_obj
 def token(obj, scope, url, realm, name, user, password, insecure, refresh):
-    '''Create a new token or use an existing one'''
+    """Create a new token or use an existing one"""
 
     user = user or obj.get('user') or os.getenv('USER')
 

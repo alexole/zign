@@ -5,3 +5,4 @@ PyYAML
 requests
 stups-tokens
 stups-cli-support
+future

@@ -47,7 +47,7 @@ def get_tokens():
     return data or {}
 
 
-def get_new_token(realm: str, scope: list, user, password, url=None, insecure=False):
+def get_new_token(realm, scope, user, password, url=None, insecure=False):
     if not url:
         config = get_config()
         url = config.get('url')
@@ -70,16 +70,20 @@ def get_new_token(realm: str, scope: list, user, password, url=None, insecure=Fa
         raise ServerError('Token Service returned invalid JSON (access_token missing)')
     return json_data
 
+get_new_token.__annotations__ = {'realm': str, 'scope': list}
 
-def get_existing_token(name: str) -> dict:
-    '''Return existing token if it exists and if it's valid, return None otherwise'''
+
+def get_existing_token(name):
+    """Return existing token if it exists and if it's valid, return None otherwise"""
     data = get_tokens()
     existing_token = data.get(name)
     if is_valid(existing_token):
         return existing_token
 
+get_existing_token.__annotations__ = {'name': str, 'return': dict}
 
-def store_token(name: str, result: dict):
+
+def store_token(name, result):
     data = get_tokens()
 
     data[name] = result
@@ -87,10 +91,15 @@ def store_token(name: str, result: dict):
 
     dir_path = os.path.dirname(TOKENS_FILE_PATH)
     if dir_path:
-        os.makedirs(dir_path, exist_ok=True)
+        try:
+            os.makedirs(dir_path) #, exist_ok=True)
+        except OSError:
+            pass
 
     with open(TOKENS_FILE_PATH, 'w') as fd:
         yaml.safe_dump(data, fd)
+
+store_token.__annotations__ = {'name': str, 'result': dict}
 
 
 def get_named_token(scope, realm, name, user, password, url=None,
@@ -150,18 +159,21 @@ def get_named_token(scope, realm, name, user, password, url=None,
     return result
 
 
-def is_valid(token: dict):
+def is_valid(token):
     now = time.time()
     return token and now < (token.get('creation_time', 0) + token.get('expires_in', 0) - TOKEN_MINIMUM_VALIDITY_SECONDS)
 
+is_valid.__annotations__ = {'token': dict}
 
-def is_user_scope(scope: str):
-    '''Is the given scope supported for users (employees) in Token Service?'''
+
+def is_user_scope(scope):
+    """Is the given scope supported for users (employees) in Token Service?"""
     return scope in set(['uid', 'cn'])
+is_user_scope.__annotations__ = {'scope': str}
 
 
-def get_service_token(name: str, scopes: list):
-    '''Get service token (tokens lib) if possible, otherwise return None'''
+def get_service_token(name, scopes):
+    """Get service token (tokens lib) if possible, otherwise return None"""
     tokens.manage(name, scopes)
     try:
         access_token = tokens.get(name)
@@ -174,10 +186,12 @@ def get_service_token(name: str, scopes: list):
 
     return access_token
 
+get_service_token.__annotations__ = {'name': str, 'scopes': list}
 
-def get_token(name: str, scopes: list):
-    '''Get an OAuth token, either from Token Service
-    or directly from OAuth provider (using the Python tokens library)'''
+
+def get_token(name, scopes):
+    """Get an OAuth token, either from Token Service
+    or directly from OAuth provider (using the Python tokens library)"""
 
     # first try if a token exists already
     token = get_existing_token(name)
@@ -206,3 +220,5 @@ def get_token(name: str, scopes: list):
     if token:
         store_token(name, token)
         return token['access_token']
+
+get_token.__annotations__ = {'name': str, 'scopes': list}
